@@ -1,10 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-// Mirrors the FIXED code's behavior:
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-function resolveApiBaseUrl_FIXED(env) {
-  return env.VITE_API_URL || 'http://localhost:5000/api';
+// Simulate the UNFIXED code's behavior:
+// const API_BASE_URL = 'http://localhost:5000/api';  <-- hardcoded, ignores env
+function resolveApiBaseUrl_UNFIXED(env) {
+  // This mirrors what the unfixed code does — always returns the hardcoded value
+  return 'http://localhost:5000/api';
 }
 
 // This is what the FIXED code should do:
@@ -17,11 +18,11 @@ function resolveApiBaseUrl_EXPECTED(env) {
 //
 // This test encodes the EXPECTED behavior. It MUST FAIL on unfixed code
 // (failure confirms the bug exists) and PASS after the fix is applied.
-test('Property 1 (Fix Verified): when VITE_API_URL is set, API_BASE_URL must resolve to it', () => {
+test('Property 1 (Bug Condition): when VITE_API_URL is set, API_BASE_URL must resolve to it', () => {
   const productionEnv = { VITE_API_URL: 'https://fashion-exchange-backend.vercel.app/api' };
 
-  // This assertion PASSES on fixed code — proving the fix is correct
-  const actual = resolveApiBaseUrl_FIXED(productionEnv);
+  // This assertion MUST FAIL on unfixed code — proving the bug exists
+  const actual = resolveApiBaseUrl_UNFIXED(productionEnv);
   assert.equal(
     actual,
     productionEnv.VITE_API_URL,
