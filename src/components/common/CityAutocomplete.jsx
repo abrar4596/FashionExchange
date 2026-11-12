@@ -58,7 +58,12 @@ export const CityAutocomplete = ({
         setResults(response.data.cities || []);
       } catch (error) {
         if (error.code !== 'ERR_CANCELED') {
-          console.error('City search error:', error);
+          console.error('City search error:', {
+            url: error.config?.url,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message,
+          });
           setResults([]);
           setSearchError('City search is unavailable. Please try again.');
         }
