@@ -6,12 +6,11 @@ import {
   User,
   Shield,
   LogOut,
-  Menu,
-  X,
   Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSwap } from '../../context/SwapContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { CityAutocomplete } from './CityAutocomplete';
 
 const CATEGORIES = [
@@ -40,8 +39,8 @@ export const Navbar = ({
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { pendingCount, openChat, swaps } = useSwap();
+  const { wishlistCount } = useWishlist();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleOpenFirstChat = () => {
     if (swaps.all && swaps.all.length > 0) {
@@ -223,12 +222,41 @@ export const Navbar = ({
               </div>
             )}
 
-            {/* Mobile Hamburger toggle */}
+            {/* Wishlist (replaces the unused mobile hamburger) */}
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-surface-dark rounded-lg hover:bg-surface-light"
+              type="button"
+              aria-label="Wishlist"
+              title="Wishlist"
+              onClick={() =>
+                isAuthenticated ? onNavigateView('wishlist') : onOpenAuthModal('login')
+              }
+              className={`relative p-2 rounded-full border transition-colors ${
+                currentView === 'wishlist'
+                  ? 'text-vinted-500 border-vinted-300 bg-vinted-50'
+                  : 'text-surface-dark border-surface-divider hover:text-vinted-500 hover:bg-surface-light'
+              }`}
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill={currentView === 'wishlist' ? 'currentColor' : 'none'}
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-vinted-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
+                  {wishlistCount}
+                </span>
+              )}
             </button>
           </div>
         </div>

@@ -8,6 +8,7 @@ export const ListingGrid = ({
   onSelectListing,
   onProposeSwap,
   onResetFilters,
+  onRequireAuth,
 }) => {
   if (isLoading) {
     return (
@@ -58,6 +59,7 @@ export const ListingGrid = ({
           listing={item}
           onSelect={onSelectListing}
           onProposeSwap={onProposeSwap}
+          onRequireAuth={onRequireAuth}
         />
       ))}
     </div>

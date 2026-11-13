@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { ConditionBadge, StatusBadge } from '../common/Badge';
-import { MapPin, Repeat, UserCheck, ShieldCheck, Calendar, ArrowRight } from 'lucide-react';
+import { MapPin, Repeat, UserCheck, ShieldCheck, Calendar, ArrowRight, Heart } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 export const ListingDetailModal = ({
   listing,
   isOpen,
   onClose,
   onProposeSwap,
+  onRequireAuth,
 }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   if (!listing) return null;
 
   const isOwner = user && user._id === listing.owner?._id;
+  const isFav = isWishlisted(listing._id);
 
   const images = listing.images && listing.images.length > 0
     ? listing.images.map((img) =>
@@ -145,7 +149,30 @@ export const ListingDetailModal = ({
           </div>
 
           {/* CTA Button */}
-          <div className="mt-6 pt-4 border-t border-surface-divider">
+          <div className="mt-6 pt-4 border-t border-surface-divider space-y-2.5">
+            {!isOwner && (
+              <button
+                type="button"
+                aria-label={isFav ? 'Remove from wishlist' : 'Save to wishlist'}
+                aria-pressed={isFav}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    onRequireAuth?.();
+                    return;
+                  }
+                  toggleWishlist(listing);
+                }}
+                className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs sm:text-sm font-semibold transition-colors ${
+                  isFav
+                    ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100'
+                    : 'border-surface-divider text-surface-dark hover:bg-surface-light'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
+                <span>{isFav ? 'Saved to Wishlist' : 'Save to Wishlist'}</span>
+              </button>
+            )}
+
             {isOwner ? (
               <div className="bg-surface-light text-center py-2.5 rounded-xl border border-surface-divider text-xs font-semibold text-surface-muted">
                 This is your listing in your closet

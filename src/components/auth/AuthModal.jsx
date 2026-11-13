@@ -3,6 +3,7 @@ import { Modal } from '../common/Modal';
 import { AlertCircle, Lock, Mail, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { CityAutocomplete } from '../common/CityAutocomplete';
+import { PasswordInput } from '../common/PasswordInput';
 
 export const AuthModal = ({ isOpen, onClose, initialTab = 'login' }) => {
   const { login, register } = useAuth();
@@ -140,17 +141,15 @@ export const AuthModal = ({ isOpen, onClose, initialTab = 'login' }) => {
             <label className="block text-xs font-semibold text-surface-dark mb-1">
               Password
             </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-surface-muted absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-surface-light border border-surface-divider rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-surface-dark focus:outline-none focus:border-vinted-500 focus:bg-white"
-              />
-            </div>
+            <PasswordInput
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              leftIcon={
+                <Lock className="w-4 h-4 text-surface-muted absolute left-3 top-1/2 -translate-y-1/2" />
+              }
+            />
           </div>
 
           {tab === 'register' && (

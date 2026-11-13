@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SwapProvider, useSwap } from './context/SwapContext';
+import { WishlistProvider } from './context/WishlistContext';
 import { Navbar } from './components/common/Navbar';
 import { HeroBanner } from './components/common/HeroBanner';
 import { FilterBar } from './components/listings/FilterBar';
@@ -11,6 +12,7 @@ import { SwapRequestModal } from './components/swap/SwapRequestModal';
 import { ChatDrawer } from './components/chat/ChatDrawer';
 import { UserProfileView } from './components/profile/UserProfileView';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { Wishlist } from './components/wishlist/Wishlist';
 import { AuthModal } from './components/auth/AuthModal';
 import { Footer } from './components/common/Footer';
 import api from './services/api';
@@ -88,6 +90,13 @@ const AppContent = () => {
   useEffect(() => {
     fetchListings();
   }, [fetchListings]);
+
+  // Wishlist is user-specific: fall back to browse if the session ends while viewing it.
+  useEffect(() => {
+    if (!isAuthenticated && currentView === 'wishlist') {
+      setCurrentView('browse');
+    }
+  }, [isAuthenticated, currentView]);
 
   const handleResetFilters = () => {
     setSearchQuery('');
@@ -184,6 +193,7 @@ const AppContent = () => {
               onSelectListing={(item) => setSelectedListingDetail(item)}
               onProposeSwap={handleProposeSwap}
               onResetFilters={handleResetFilters}
+              onRequireAuth={() => handleOpenAuth('login')}
             />
           </div>
         )}
@@ -200,6 +210,14 @@ const AppContent = () => {
             onSelectListing={(item) => setSelectedListingDetail(item)}
           />
         )}
+
+        {currentView === 'wishlist' && isAuthenticated && (
+          <Wishlist
+            onSelectListing={(item) => setSelectedListingDetail(item)}
+            onProposeSwap={handleProposeSwap}
+            onNavigateView={(view) => setCurrentView(view)}
+          />
+        )}
       </main>
 
       {/* Footer with Circular Economy Guiding Principles */}
@@ -211,6 +229,7 @@ const AppContent = () => {
         isOpen={!!selectedListingDetail}
         onClose={() => setSelectedListingDetail(null)}
         onProposeSwap={handleProposeSwap}
+        onRequireAuth={() => handleOpenAuth('login')}
       />
 
       <SwapRequestModal
@@ -241,9 +260,11 @@ const AppContent = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <SwapProvider>
-        <AppContent />
-      </SwapProvider>
+      <WishlistProvider>
+        <SwapProvider>
+          <AppContent />
+        </SwapProvider>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

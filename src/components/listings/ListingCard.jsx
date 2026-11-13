@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Heart, MapPin, Repeat } from 'lucide-react';
 import { ConditionBadge } from '../common/Badge';
+import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 
-export const ListingCard = ({ listing, onSelect, onProposeSwap }) => {
-  const [isFav, setIsFav] = useState(false);
+export const ListingCard = ({ listing, onSelect, onProposeSwap, onRequireAuth }) => {
+  const { isAuthenticated } = useAuth();
+  const { isWishlisted, toggleWishlist } = useWishlist();
+  const isFav = isWishlisted(listing._id);
 
   // Format image URL (handles localhost relative paths or direct URLs)
   const imageUrl = listing.images?.[0]?.startsWith('http')
@@ -28,12 +32,18 @@ export const ListingCard = ({ listing, onSelect, onProposeSwap }) => {
           }}
         />
 
-        {/* Favorite Heart Button */}
+        {/* Wishlist toggle (persisted per user) */}
         <button
           type="button"
+          aria-label={isFav ? 'Remove from wishlist' : 'Save to wishlist'}
+          aria-pressed={isFav}
           onClick={(e) => {
             e.stopPropagation();
-            setIsFav(!isFav);
+            if (!isAuthenticated) {
+              onRequireAuth?.();
+              return;
+            }
+            toggleWishlist(listing);
           }}
           className={`absolute top-2.5 right-2.5 p-2 rounded-full backdrop-blur-md transition-all ${
             isFav
