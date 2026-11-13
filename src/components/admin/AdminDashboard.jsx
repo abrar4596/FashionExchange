@@ -13,6 +13,7 @@ import {
 import api from '../../services/api';
 import { useRealtimeSync } from '../../hooks/useRealtimeSync';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const AdminDashboard = ({ onSelectListing }) => {
   const [metricsData, setMetricsData] = useState(null);
@@ -414,7 +415,7 @@ export const AdminDashboard = ({ onSelectListing }) => {
                       <p className="font-semibold">{item.owner?.name}</p>
                       <p className="text-[11px] text-surface-muted">{item.city}</p>
                     </td>
-                    <td className="px-4 py-3 font-bold text-vinted-600">~${item.estimatedValue}</td>
+                    <td className="px-4 py-3 font-bold text-vinted-600">~{formatCurrency(item.estimatedValue)}</td>
                     <td className="px-5 py-3 text-right">
                       <button
                         onClick={() => handleDeleteListing(item._id)}

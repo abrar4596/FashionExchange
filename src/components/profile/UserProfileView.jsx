@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { StatusBadge, ConditionBadge } from '../common/Badge';
-import { MapPin, UserCheck, Shirt, Trash2, Edit3, PlusCircle, Repeat } from 'lucide-react';
+import { StatusBadge } from '../common/Badge';
+import { MapPin, Shirt, Trash2, Edit3, PlusCircle } from 'lucide-react';
 import api from '../../services/api';
 import { CityAutocomplete } from '../common/CityAutocomplete';
 import { useRealtimeSync } from '../../hooks/useRealtimeSync';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
   const { user, updateUserProfile, updateUserBio, refreshUser } = useAuth();
@@ -315,7 +316,7 @@ export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
                         </p>
                       </div>
                       <div className="mt-2.5 pt-2 border-t border-surface-divider flex items-center justify-between text-xs font-bold">
-                        <span className="text-vinted-600">~${item.estimatedValue}</span>
+                        <span className="text-vinted-600">~{formatCurrency(item.estimatedValue)}</span>
                         <span className="text-[10px] text-surface-muted">📍 {item.city}</span>
                       </div>
                     </div>

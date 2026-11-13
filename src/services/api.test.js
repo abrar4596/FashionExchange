@@ -2,15 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 // Simulate the UNFIXED code's behavior:
-// const API_BASE_URL = 'http://localhost:5000/api';  <-- hardcoded, ignores env
 function resolveApiBaseUrl_UNFIXED(env) {
   // This mirrors what the unfixed code does — always returns the hardcoded value
   return 'http://localhost:5000/api';
-}
-
-// This is what the FIXED code should do:
-function resolveApiBaseUrl_EXPECTED(env) {
-  return env.VITE_API_URL || 'http://localhost:5000/api';
 }
 
 // Property 1: Bug Condition — API Base URL Hardcoded in Production

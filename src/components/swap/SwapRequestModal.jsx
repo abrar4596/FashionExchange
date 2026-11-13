@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
-import { Repeat, CheckCircle2, AlertCircle, ArrowRight, PlusCircle } from 'lucide-react';
+import { Repeat, CheckCircle2, AlertCircle, PlusCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useSwap } from '../../context/SwapContext';
-import { useAuth } from '../../context/AuthContext';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const SwapRequestModal = ({
   requestedItem,
@@ -12,7 +12,6 @@ export const SwapRequestModal = ({
   onClose,
   onOpenNewListingModal,
 }) => {
-  const { user } = useAuth();
   const { createSwap } = useSwap();
   const [closetItems, setClosetItems] = useState([]);
   const [selectedOfferedItem, setSelectedOfferedItem] = useState(null);
@@ -110,7 +109,7 @@ export const SwapRequestModal = ({
             <div className="text-right flex-shrink-0">
               <span className="text-xs text-surface-muted block font-medium">Estimated Value</span>
               <span className="text-sm font-black text-surface-dark">
-                ~${requestedItem.estimatedValue}
+                ~{formatCurrency(requestedItem.estimatedValue)}
               </span>
             </div>
           </div>
@@ -185,7 +184,7 @@ export const SwapRequestModal = ({
                         {item.title}
                       </p>
                       <p className="text-[11px] text-surface-muted">
-                        ~${item.estimatedValue} · Size {item.size}
+                        ~{formatCurrency(item.estimatedValue)} · Size {item.size}
                       </p>
                     </div>
                     {isSelected && (
@@ -215,10 +214,10 @@ export const SwapRequestModal = ({
               }`}
             >
               {Math.abs(valueDiff) <= 5
-                ? 'Equitable Swap (~$0 diff)'
+                ? `Equitable Swap (~${formatCurrency(0)} diff)`
                 : valueDiff > 0
-                ? `+$${valueDiff} in recipient's favor`
-                : `-$${Math.abs(valueDiff)} difference`}
+                ? `+${formatCurrency(valueDiff)} in recipient's favor`
+                : `-${formatCurrency(Math.abs(valueDiff))} difference`}
             </span>
           </div>
         )}

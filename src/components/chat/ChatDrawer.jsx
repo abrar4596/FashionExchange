@@ -4,10 +4,8 @@ import {
   Send,
   Repeat,
   CheckCircle,
-  XCircle,
   Check,
   MapPin,
-  Clock,
   Sparkles,
   MessageSquare,
 } from 'lucide-react';
@@ -16,6 +14,7 @@ import { useSwap } from '../../context/SwapContext';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const ChatDrawer = () => {
   const { user } = useAuth();
@@ -201,7 +200,7 @@ export const ChatDrawer = () => {
                     {activeSwap.offeredItem?.title}
                   </p>
                   <p className="text-[10px] text-vinted-600 font-semibold">
-                    ~${activeSwap.offeredItem?.estimatedValue}
+                    ~{formatCurrency(activeSwap.offeredItem?.estimatedValue)}
                   </p>
                 </div>
               </div>
@@ -219,7 +218,7 @@ export const ChatDrawer = () => {
                     {activeSwap.requestedItem?.title}
                   </p>
                   <p className="text-[10px] text-vinted-600 font-semibold">
-                    ~${activeSwap.requestedItem?.estimatedValue}
+                    ~{formatCurrency(activeSwap.requestedItem?.estimatedValue)}
                   </p>
                 </div>
               </div>

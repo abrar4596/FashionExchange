@@ -1,6 +1,7 @@
 import React from 'react';
 import { useWishlist } from '../../context/WishlistContext';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 // Inline SVGs keep this page dependency-free (no additional icon package required).
 const baseProps = {
@@ -86,7 +87,7 @@ const WishlistCard = ({ item, onSelectListing, onProposeSwap, onRemove }) => {
 
         <div className="absolute bottom-2.5 left-2.5 bg-vinted-900/85 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md border border-white/10">
           <RepeatIcon className="w-3 h-3 text-accent-gold" />
-          <span>Value: ~${item.estimatedValue}</span>
+          <span>Value: ~{formatCurrency(item.estimatedValue)}</span>
         </div>
       </div>
 

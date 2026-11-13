@@ -1,9 +1,9 @@
 import React from 'react';
 import { Heart, MapPin, Repeat } from 'lucide-react';
-import { ConditionBadge } from '../common/Badge';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const ListingCard = ({ listing, onSelect, onProposeSwap, onRequireAuth }) => {
   const { isAuthenticated } = useAuth();
@@ -53,7 +53,7 @@ export const ListingCard = ({ listing, onSelect, onProposeSwap, onRequireAuth })
         {/* Swap Valuation Badge (replaces monetary checkout with barter value) */}
         <div className="absolute bottom-2.5 left-2.5 bg-vinted-900/85 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md border border-white/10">
           <Repeat className="w-3 h-3 text-accent-gold" />
-          <span>Value: ~${listing.estimatedValue}</span>
+          <span>Value: ~{formatCurrency(listing.estimatedValue)}</span>
         </div>
       </div>
 

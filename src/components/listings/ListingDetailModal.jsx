@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { ConditionBadge, StatusBadge } from '../common/Badge';
-import { MapPin, Repeat, UserCheck, ShieldCheck, Calendar, ArrowRight, Heart } from 'lucide-react';
+import { MapPin, Repeat, UserCheck, ArrowRight, Heart } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { resolveImageUrl, handleImageError, FALLBACK_IMAGE } from '../../utils/imageUrl';
+import { formatCurrency } from '../../utils/currency';
 
 export const ListingDetailModal = ({
   listing,
@@ -85,7 +86,7 @@ export const ListingDetailModal = ({
                 <span className="text-xs text-surface-muted font-medium">Estimated Swap Value</span>
                 <span className="text-base font-black text-vinted-600 flex items-center gap-1">
                   <Repeat className="w-4 h-4 text-accent-gold" />
-                  ~${listing.estimatedValue}
+                  ~{formatCurrency(listing.estimatedValue)}
                 </span>
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-surface-divider text-xs">

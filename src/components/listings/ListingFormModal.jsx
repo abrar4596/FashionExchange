@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
-import { UploadCloud, Image as ImageIcon, X, AlertCircle } from 'lucide-react';
+import { UploadCloud, X, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { CityAutocomplete } from '../common/CityAutocomplete';
@@ -102,7 +102,7 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
       return;
     }
     if (!estimatedValue || Number(estimatedValue) <= 0) {
-      setError('Please provide an estimated swap value greater than $0.');
+      setError('Please provide an estimated swap value greater than ₹0.');
       return;
     }
     if (imagePreviews.length === 0) {
@@ -333,11 +333,11 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-surface-dark mb-1">
-              Estimated Swap Value ($) *
+              Estimated Swap Value (₹) *
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-muted text-xs font-bold">
-                $
+                ₹
               </span>
               <input
                 type="number"
