@@ -3,16 +3,15 @@ import { Heart, MapPin, Repeat } from 'lucide-react';
 import { ConditionBadge } from '../common/Badge';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export const ListingCard = ({ listing, onSelect, onProposeSwap, onRequireAuth }) => {
   const { isAuthenticated } = useAuth();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const isFav = isWishlisted(listing._id);
 
-  // Format image URL (handles localhost relative paths or direct URLs)
-  const imageUrl = listing.images?.[0]?.startsWith('http')
-    ? listing.images[0]
-    : `http://localhost:5000${listing.images?.[0]}`;
+  // Cloudinary secure_urls pass straight through; legacy relative paths resolve against the API origin.
+  const imageUrl = resolveImageUrl(listing.images?.[0]);
 
   return (
     <div
@@ -26,10 +25,7 @@ export const ListingCard = ({ listing, onSelect, onProposeSwap, onRequireAuth })
           alt={listing.title}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            e.target.src =
-              'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&h=800&fit=crop';
-          }}
+          onError={handleImageError}
         />
 
         {/* Wishlist toggle (persisted per user) */}

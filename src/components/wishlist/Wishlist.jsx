@@ -1,6 +1,6 @@
 import React from 'react';
-import api from '../../services/api';
 import { useWishlist } from '../../context/WishlistContext';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 // Inline SVGs keep this page dependency-free (no additional icon package required).
 const baseProps = {
@@ -53,20 +53,6 @@ const ArrowLeftIcon = (props) => (
   </svg>
 );
 
-const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&h=800&fit=crop';
-
-// Relative `/uploads/...` paths must be resolved against the API origin, never a hardcoded host.
-const resolveImageUrl = (image) => {
-  if (!image) return FALLBACK_IMAGE;
-  if (image.startsWith('http')) return image;
-  try {
-    return `${new URL(api.defaults.baseURL).origin}${image}`;
-  } catch {
-    return FALLBACK_IMAGE;
-  }
-};
-
 const WishlistCard = ({ item, onSelectListing, onProposeSwap, onRemove }) => {
   const isAvailable = item.status === 'available';
 
@@ -81,9 +67,7 @@ const WishlistCard = ({ item, onSelectListing, onProposeSwap, onRemove }) => {
           alt={item.title}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            e.target.src = FALLBACK_IMAGE;
-          }}
+          onError={handleImageError}
         />
 
         {/* Saved indicator doubles as a remove action */}

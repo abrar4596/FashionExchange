@@ -4,6 +4,7 @@ import { Repeat, CheckCircle2, AlertCircle, ArrowRight, PlusCircle } from 'lucid
 import api from '../../services/api';
 import { useSwap } from '../../context/SwapContext';
 import { useAuth } from '../../context/AuthContext';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export const SwapRequestModal = ({
   requestedItem,
@@ -90,13 +91,10 @@ export const SwapRequestModal = ({
           </span>
           <div className="flex items-center gap-3 p-3 bg-surface-light rounded-xl border border-surface-divider">
             <img
-              src={
-                requestedItem.images?.[0]?.startsWith('http')
-                  ? requestedItem.images[0]
-                  : `http://localhost:5000${requestedItem.images?.[0]}`
-              }
+              src={resolveImageUrl(requestedItem.images?.[0])}
               alt={requestedItem.title}
               className="w-14 h-18 rounded-lg object-cover border border-surface-divider flex-shrink-0"
+              onError={handleImageError}
             />
             <div className="flex-1 min-w-0">
               <span className="text-[11px] font-bold text-vinted-700 uppercase">
@@ -164,9 +162,7 @@ export const SwapRequestModal = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-48 overflow-y-auto pr-1">
               {closetItems.map((item) => {
                 const isSelected = selectedOfferedItem?._id === item._id;
-                const img = item.images?.[0]?.startsWith('http')
-                  ? item.images[0]
-                  : `http://localhost:5000${item.images?.[0]}`;
+                const img = resolveImageUrl(item.images?.[0]);
 
                 return (
                   <div
@@ -182,6 +178,7 @@ export const SwapRequestModal = ({
                       src={img}
                       alt={item.title}
                       className="w-10 h-12 rounded-lg object-cover flex-shrink-0"
+                      onError={handleImageError}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-surface-dark truncate">

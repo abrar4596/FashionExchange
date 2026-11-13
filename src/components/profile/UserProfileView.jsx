@@ -5,6 +5,7 @@ import { MapPin, UserCheck, Shirt, Trash2, Edit3, PlusCircle, Repeat } from 'luc
 import api from '../../services/api';
 import { CityAutocomplete } from '../common/CityAutocomplete';
 import { useRealtimeSync } from '../../hooks/useRealtimeSync';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
   const { user, updateUserProfile, updateUserBio, refreshUser } = useAuth();
@@ -97,6 +98,7 @@ export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
                 src={user.avatarUrl}
                 alt={user.name}
                 className="w-20 h-20 rounded-2xl object-cover border-2 border-vinted-200 shadow-md"
+                onError={handleImageError}
               />
             ) : (
               <div className="w-20 h-20 rounded-2xl bg-vinted-500 text-white font-extrabold text-2xl flex items-center justify-center shadow-md">
@@ -273,9 +275,7 @@ export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {currentListings.map((item) => {
-                const img = item.images?.[0]?.startsWith('http')
-                  ? item.images[0]
-                  : `http://localhost:5000${item.images?.[0]}`;
+                const img = resolveImageUrl(item.images?.[0]);
                 return (
                   <div
                     key={item._id}
@@ -287,6 +287,7 @@ export const UserProfileView = ({ onOpenNewListingModal, onSelectListing }) => {
                         src={img}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        onError={handleImageError}
                       />
                       <div className="absolute top-2 left-2">
                         <StatusBadge status={item.status} />

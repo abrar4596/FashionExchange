@@ -15,6 +15,7 @@ import { StatusBadge } from '../common/Badge';
 import { useSwap } from '../../context/SwapContext';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export const ChatDrawer = () => {
   const { user } = useAuth();
@@ -115,6 +116,7 @@ export const ChatDrawer = () => {
                 src={otherParticipant.avatarUrl}
                 alt={otherParticipant.name}
                 className="w-9 h-9 rounded-full object-cover border border-surface-divider"
+                onError={handleImageError}
               />
             ) : (
               <div className="w-9 h-9 rounded-full bg-vinted-500 text-white flex items-center justify-center font-bold text-xs">
@@ -188,13 +190,10 @@ export const ChatDrawer = () => {
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="bg-white p-2 rounded-lg border border-vinted-100 flex items-center gap-2">
                 <img
-                  src={
-                    activeSwap.offeredItem?.images?.[0]?.startsWith('http')
-                      ? activeSwap.offeredItem.images[0]
-                      : `http://localhost:5000${activeSwap.offeredItem?.images?.[0]}`
-                  }
+                  src={resolveImageUrl(activeSwap.offeredItem?.images?.[0])}
                   alt=""
                   className="w-10 h-12 rounded object-cover flex-shrink-0"
+                  onError={handleImageError}
                 />
                 <div className="min-w-0">
                   <span className="text-[10px] text-surface-muted block uppercase">Offered</span>
@@ -209,13 +208,10 @@ export const ChatDrawer = () => {
 
               <div className="bg-white p-2 rounded-lg border border-vinted-100 flex items-center gap-2">
                 <img
-                  src={
-                    activeSwap.requestedItem?.images?.[0]?.startsWith('http')
-                      ? activeSwap.requestedItem.images[0]
-                      : `http://localhost:5000${activeSwap.requestedItem?.images?.[0]}`
-                  }
+                  src={resolveImageUrl(activeSwap.requestedItem?.images?.[0])}
                   alt=""
                   className="w-10 h-12 rounded object-cover flex-shrink-0"
+                  onError={handleImageError}
                 />
                 <div className="min-w-0">
                   <span className="text-[10px] text-surface-muted block uppercase">Requested</span>

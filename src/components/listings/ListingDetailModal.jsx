@@ -4,6 +4,7 @@ import { ConditionBadge, StatusBadge } from '../common/Badge';
 import { MapPin, Repeat, UserCheck, ShieldCheck, Calendar, ArrowRight, Heart } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { resolveImageUrl, handleImageError, FALLBACK_IMAGE } from '../../utils/imageUrl';
 
 export const ListingDetailModal = ({
   listing,
@@ -22,12 +23,8 @@ export const ListingDetailModal = ({
   const isFav = isWishlisted(listing._id);
 
   const images = listing.images && listing.images.length > 0
-    ? listing.images.map((img) =>
-        img.startsWith('http') ? img : `http://localhost:5000${img}`
-      )
-    : [
-        'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&h=800&fit=crop',
-      ];
+    ? listing.images.map(resolveImageUrl)
+    : [FALLBACK_IMAGE];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Garment Details" maxWidth="max-w-3xl">
@@ -39,6 +36,7 @@ export const ListingDetailModal = ({
               src={images[activeImageIndex]}
               alt={listing.title}
               className="w-full h-full object-cover"
+              onError={handleImageError}
             />
             <div className="absolute top-3 left-3">
               <StatusBadge status={listing.status} />
@@ -58,7 +56,7 @@ export const ListingDetailModal = ({
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={img} alt="" className="w-full h-full object-cover" onError={handleImageError} />
                 </button>
               ))}
             </div>

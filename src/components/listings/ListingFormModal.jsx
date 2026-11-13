@@ -4,6 +4,7 @@ import { UploadCloud, Image as ImageIcon, X, AlertCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { CityAutocomplete } from '../common/CityAutocomplete';
+import { handleImageError } from '../../utils/imageUrl';
 
 const CATEGORIES = ['Women', 'Men', 'Kids', 'Vintage', 'Shoes', 'Accessories'];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One size'];
@@ -231,7 +232,7 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
                   key={idx}
                   className="relative w-16 h-20 rounded-lg overflow-hidden border border-surface-divider flex-shrink-0 group"
                 >
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <img src={url} alt="" className="w-full h-full object-cover" onError={handleImageError} />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}

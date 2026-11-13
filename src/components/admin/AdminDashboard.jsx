@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import { useRealtimeSync } from '../../hooks/useRealtimeSync';
+import { resolveImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export const AdminDashboard = ({ onSelectListing }) => {
   const [metricsData, setMetricsData] = useState(null);
@@ -323,7 +324,7 @@ export const AdminDashboard = ({ onSelectListing }) => {
                 <tr key={u._id} className="hover:bg-surface-light/40 transition-colors">
                   <td className="px-5 py-3.5 flex items-center gap-3">
                     {u.avatarUrl ? (
-                      <img src={u.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <img src={u.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" onError={handleImageError} />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-vinted-100 text-vinted-700 font-bold flex items-center justify-center text-xs">
                         {u.name?.charAt(0)}
@@ -395,13 +396,11 @@ export const AdminDashboard = ({ onSelectListing }) => {
             </thead>
             <tbody className="divide-y divide-surface-divider">
               {recentListings.map((item) => {
-                const img = item.images?.[0]?.startsWith('http')
-                  ? item.images[0]
-                  : `http://localhost:5000${item.images?.[0]}`;
+                const img = resolveImageUrl(item.images?.[0]);
                 return (
                   <tr key={item._id} className="hover:bg-surface-light/40 transition-colors">
                     <td className="px-5 py-3 flex items-center gap-3">
-                      <img src={img} alt="" className="w-10 h-12 rounded object-cover flex-shrink-0" />
+                      <img src={img} alt="" className="w-10 h-12 rounded object-cover flex-shrink-0" onError={handleImageError} />
                       <div className="min-w-0 max-w-[180px]">
                         <p className="font-bold text-surface-dark truncate">{item.title}</p>
                         <p className="text-[11px] text-surface-muted truncate">{item.brand}</p>
