@@ -15,6 +15,12 @@ const CONDITIONS = [
   'Satisfactory',
 ];
 
+// Vercel rejects serverless request bodies larger than ~4.5 MB before the API runs, so block
+// oversized uploads here — otherwise the browser only gets a raw platform 413 with no JSON body.
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // per photo
+const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // whole multipart payload
+const toMb = (bytes) => (bytes / (1024 * 1024)).toFixed(1);
+
 export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
   const { user } = useAuth();
   const [title, setTitle] = useState('');
@@ -38,6 +44,24 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
 
     if (imagePreviews.length + files.length > 8) {
       setError('Maximum 8 photos allowed per item.');
+      return;
+    }
+
+    const oversized = files.filter((f) => f.size > MAX_IMAGE_BYTES);
+    if (oversized.length > 0) {
+      setError(
+        `Each photo must be under ${toMb(MAX_IMAGE_BYTES)}MB. Too large: ${oversized
+          .map((f) => f.name)
+          .join(', ')}`
+      );
+      return;
+    }
+
+    const combinedBytes = [...selectedFiles, ...files].reduce((sum, f) => sum + f.size, 0);
+    if (combinedBytes > MAX_TOTAL_BYTES) {
+      setError(
+        `Total upload must stay under ${toMb(MAX_TOTAL_BYTES)}MB. Remove or downscale some photos, or paste an image URL instead.`
+      );
       return;
     }
 
@@ -124,7 +148,17 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
       onClose();
     } catch (err) {
       console.error('Create listing error:', err);
-      setError(err.response?.data?.message || 'Failed to create listing. Please try again.');
+      const data = err.response?.data;
+      let message =
+        (data && typeof data === 'object' && data.message) ||
+        err.message ||
+        'Failed to create listing. Please try again.';
+      // Backend now returns per-field validation details — surface them instead of a generic error.
+      if (data && data.details && typeof data.details === 'object') {
+        const fieldErrors = Object.values(data.details).filter(Boolean).join(' ');
+        if (fieldErrors) message = `${message} ${fieldErrors}`;
+      }
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -167,7 +201,7 @@ export const ListingFormModal = ({ isOpen, onClose, onListingCreated }) => {
                 </span>
                 <span className="text-xs text-surface-muted"> or drag & drop</span>
               </div>
-              <p className="text-[11px] text-surface-muted">Supports JPEG, PNG, WebP up to 5MB</p>
+              <p className="text-[11px] text-surface-muted">Supports JPEG, PNG, WebP up to 4MB (total upload under 4MB)</p>
             </label>
 
             {/* URL input fallback */}
